@@ -3,11 +3,13 @@ import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import axios from "axios";
 import "./signup.css";
 import { Link } from "react-router-dom";
+import SimpleReactValidator from 'simple-react-validator';
 
 export default class Signup extends Component {
  
   constructor(props) {
     super(props);
+    this.validator = new SimpleReactValidator({ autoForceUpdate: this });
     this.state = {
       signupData: {
         name: "",
@@ -29,24 +31,23 @@ export default class Signup extends Component {
   };
   onSubmitHandler(e) {
     e.preventDefault();
-    this.setState({ isLoading: true });
-    axios
-      .post("api/user-signup", this.state.signupData)
+    if (this.validator.fieldValid('email') && this.validator.fieldValid('name') && this.validator.fieldValid('phone') 
+    && this.validator.fieldValid('password')) {
+     
+      this.setState({ isLoading: true });
+    axios.post("api/user-signup", this.state.signupData)
       .then((response) => {
+           
         this.setState({ isLoading: false });
         if (response.data.status === 200) {
-          this.setState({
+            this.validator.hideMessages();
+                this.setState({
             msg: response.data.message,
-            signupData: {
-              name: "",
-              email: "",
-              phone: "",
-              password: "",
-            },
-          });
+                });
           setTimeout(() => {
             this.setState({ msg: "" });
           }, 2000);
+             
         }
 
         if (response.data.status === "failed") {
@@ -56,6 +57,12 @@ export default class Signup extends Component {
           }, 10000);
         }
       });
+      
+    }
+    else {
+      this.validator.showMessages();
+      this.forceUpdate();
+    }
   };
   render() {
     const isLoading = this.state.isLoading;
@@ -70,7 +77,10 @@ export default class Signup extends Component {
               placeholder="Enter name"
               value={this.state.signupData.name}
               onChange={this.onChangehandler}
+              onBlur={() => this.validator.showMessageFor('name')}
             />
+            <span style={{color:'red'}}>{this.validator.message('name', this.state.signupData.name, 'required|min:3')}</span>
+						
           </FormGroup>
           <FormGroup>
             <Label for="email">Email id</Label>
@@ -80,7 +90,9 @@ export default class Signup extends Component {
               placeholder="Enter email"
               value={this.state.signupData.email}
               onChange={this.onChangehandler}
+              onBlur={() => this.validator.showMessageFor('email')}
             />
+            <span style={{color:'red'}}>{this.validator.message('email', this.state.signupData.email, 'required|email')}</span>
           </FormGroup>
           <FormGroup>
             <Label for="phone">Phone Number</Label>
@@ -90,7 +102,9 @@ export default class Signup extends Component {
               placeholder="Enter phone number"
               value={this.state.signupData.phone}
               onChange={this.onChangehandler}
+              onBlur={() => this.validator.showMessageFor('phone')}
             />
+            <span style={{color:'red'}}>{this.validator.message('phone', this.state.signupData.phone, 'required|phone')}</span>
           </FormGroup>
           <FormGroup>
             <Label for="password">Password</Label>
@@ -100,7 +114,9 @@ export default class Signup extends Component {
               placeholder="Enter password"
               value={this.state.signupData.password}
               onChange={this.onChangehandler}
+              onBlur={() => this.validator.showMessageFor('password')}
             />
+            <span style={{color:'red'}}>{this.validator.message('password', this.state.signupData.password, 'required|min:6')}</span>
           </FormGroup>
           <p className="text-white">{this.state.msg}</p>
           <Button

@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-//import { BrowserRouter, Route, Switch } from 'react-router-dom'
-import Header from './Header'
+import Header from './Layout/Header'
 import ProjectsList from './ProjectsList'
 import Register from './Register'
 import NewProject from './NewProject'
@@ -33,11 +32,12 @@ class App extends Component {
 			 <BrowserRouter>
 			 <div>
 			   <Header />
-			 
 			   <Switch>
-			   <Route exact path="/" component={Signup}></Route>
-		   <Route path="/sign-in" component={Signin}></Route>
-		   <Route path="/home" component={Home}></Route>
+			  <Route exact path="/" component={Signup}></Route>
+		      <Route path="/sign-in" component={Signin}></Route>
+		      <Route path="/home" component={Home}></Route>
+			  <Route exact path='/project' component={ProjectsList} />
+              <Route path='/create' component={NewProject} />
 				   </Switch>
 			 </div>
 		   </BrowserRouter>
@@ -45,11 +45,13 @@ class App extends Component {
 				<BrowserRouter>
 				<div>
 				  <Header />
-				
+				  {navLink}
 				  <Switch>
-				  <Route exact path="/" component={Signup}></Route>
+			  <Route exact path="/" component={Signup}></Route>
 			  <Route path="/sign-in" component={Signin}></Route>
 			  <Route path="/home" component={Home}></Route>
+			  <Route exact path='/project' component={ProjectsList} />
+              <Route path='/create' component={NewProject} />
 					  </Switch>
 				</div>
 			  </BrowserRouter>
@@ -60,31 +62,6 @@ class App extends Component {
 			
 		  )
 
-
-
-
-
-
-
-
-		// return (
-		//   <div className="App">
-		// 	{login ? (
-		// 	  <Router>
-		// 		<Route exact path="/" component={Signup}></Route>
-		// 		<Route path="/sign-in" component={Signin}></Route>
-		// 		<Route path="/home" component={Home}></Route>
-		// 	  </Router>
-		// 	) : (
-		// 	  <Router>
-		// 		{navLink}
-		// 		<Route exact path="/" component={Signup}></Route>
-		// 		<Route path="/sign-in" component={Signin}></Route>
-		// 		<Route path="/home" component={Home}></Route>
-		// 	  </Router>
-		// 	)}
-		//   </div>
-		// );
 }
 }
 

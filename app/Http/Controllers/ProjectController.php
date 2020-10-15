@@ -2,10 +2,20 @@
 namespace App\Http\Controllers;
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 class ProjectController extends Controller
+
 {
+  public function __construct()
+    {
+        //$this->middleware('auth:api');
+        $this->middleware(function (Request $request, $next) {
+          $this->userId = \Auth::id();
+          return $next($request);
+        });
+    }
     public function index()
     {
       $projects = Project::where('is_completed', false)
@@ -20,6 +30,7 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
+      $userId = auth("api")->user()->id;
       $validatedData = $request->validate([
         'name' => 'required',
         'description' => 'required',
@@ -30,7 +41,7 @@ class ProjectController extends Controller
         'description' => $validatedData['description'],
       ]);
 
-      return response()->json('Project created!');
+      return response()->json($userId);
     }
 
     public function show($id)

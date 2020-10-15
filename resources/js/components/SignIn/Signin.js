@@ -2,10 +2,12 @@ import React, { Component } from "react";
 import { Button, Form, FormGroup, Label, Input } from "reactstrap";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
+import SimpleReactValidator from 'simple-react-validator';
 
 export default class Signin extends Component {
   constructor(props) {
     super(props);
+    this.validator = new SimpleReactValidator({ autoForceUpdate: this });
     this.state = {
       email: "",
       password: "",
@@ -28,6 +30,10 @@ export default class Signin extends Component {
   };
 
   onSignInHandler (e) {
+    e.preventDefault();
+    if (this.validator.fieldValid('email') 
+    && this.validator.fieldValid('password')) {
+     
     this.setState({ isLoading: true });
     axios
       .post("api/user-login", {
@@ -71,6 +77,11 @@ export default class Signin extends Component {
       .catch((error) => {
         console.log(error);
       });
+    }
+    else{ 
+    this.validator.showMessages();
+    this.forceUpdate();
+    }
   };
 
   render() {
@@ -95,7 +106,9 @@ export default class Signin extends Component {
               placeholder="Enter email"
               value={this.state.email}
               onChange={this.onChangehandler}
+              onBlur={() => this.validator.showMessageFor('email')}
             />
+            <span style={{color:'red'}}>{this.validator.message('email', this.state.email, 'required|email')}</span>
             <span className="text-danger">{this.state.msg}</span>
             <span className="text-danger">{this.state.errMsgEmail}</span>
           </FormGroup>
@@ -107,7 +120,9 @@ export default class Signin extends Component {
               placeholder="Enter password"
               value={this.state.password}
               onChange={this.onChangehandler}
-            />
+              onBlur={() => this.validator.showMessageFor('password')}
+              />
+              <span style={{color:'red'}}>{this.validator.message('password', this.state.password, 'required|min:6')}</span>
             <span className="text-danger">{this.state.errMsgPwd}</span>
           </FormGroup>
           <p className="text-danger">{this.state.errMsg}</p>
